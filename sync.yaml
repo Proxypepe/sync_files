@@ -1,0 +1,8 @@
+- name: Config Vim with plugins
+  hosts: vagrant
+  gather_facts: false
+
+  tasks:
+    - name: Sync using role
+      ansible.builtin.import_role:
+        name: sync

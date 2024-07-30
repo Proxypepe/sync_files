@@ -1,0 +1,53 @@
+---
+# tasks file for sync
+
+# - name: Plain sync | Include sync play
+#   ansible.builtin.include_tasks: plain_sync.yaml
+#   when: sync_plain.enabled and not sync_plain.raw.enabled
+
+- name: Sync | Get the checksum of the desired files
+  ansible.builtin.stat:
+    path: "{{ item.src_directory }}/{{ item.src_name }}"
+    get_checksum: true
+  loop: "{{ sync_template.files }}"
+  register: local_files
+  # delegate_to: 127.0.0.1
+
+- name: Sync | Checking if desired files exist
+  ansible.builtin.fail:
+    msg: "File {{ item }} not exists"
+  when: not item.stat.exists
+  loop: "{{ local_files.results }}"
+
+- name: Sync | Get the checksum of the target files
+  ansible.builtin.stat:
+    path: "{{ item.dest_directory }}/{{ item.dest_name }}"
+    get_checksum: true
+  loop: "{{ sync_template.files }}"
+  register: remote_files
+
+- name: Sync | Checking if target files exist
+  ansible.builtin.fail:
+    msg: "File {{ item }} not exists"
+  when: not item.stat.exists
+  loop: "{{ remote_files.results }}"
+
+# - name: Loop over two lists
+#   ansible.builtin.debug:
+#     msg: "{{ item.0 }} - {{ item.1 }}"
+#   loop: "{{ local_files.results | zip(remote_files.results) | list }}"
+
+# - name: Loop over two lists
+#   ansible.builtin.debug:
+#     msg: "Name ---{{ item.0.item.src_directory }}"
+#   loop: "{{ local_files.results | zip(remote_files.results) | list }}"
+
+- name: Sync | Include tasks to synchronize files if they have different checksum
+  ansible.builtin.include_tasks: sync_file.yaml
+  vars:
+    src_directory: "{{ item.0.item.src_directory }}"
+    dest_directory: "{{ item.1.item.dest_directory }}"
+    src_name: "{{ item.0.item.src_name }}"
+    dest_name: "{{ item.1.item.dest_name }}"
+  loop: "{{ local_files.results | zip(remote_files.results) | list }}"
+  when: item.0.stat.checksum != item.1.stat.checksum

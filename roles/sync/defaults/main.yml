@@ -1,0 +1,56 @@
+---
+# defaults file for sync
+
+sync_plain:
+  enabled: true
+  raw:
+    enabled: true
+    directory: "/tmp"
+    backup_directory: "/etc/copy-here"
+  files:
+    - {
+      src_directory: "/tmp/",
+      src_name: "system.yaml",
+      dest_directory: "/etc/copy-here",
+      dest_name: "system.yaml",
+    }
+    - {
+      src_directory: "/tmp/",
+      src_name: "system.yaml",
+      dest_directory: "/etc/copy-here",
+      dest_name: "system.yaml",
+    }
+  own:
+    change: true
+    user: consul
+    group: consul
+    # - {
+    #   src_directory: "/path/to/source/dir",
+    #   src_name: "file1",
+    #   dest_directory: "/path/to/source/dir",
+    #   dest_name: "file1",
+    # }
+
+sync_template:
+  enabled: true
+  raw:
+    enabled: true
+    directory: "/tmp"
+    backup_directory: "/etc/copy-here"
+  files:
+    - {
+      src_directory: "/tmp",
+      src_name: "system.yaml",
+      dest_directory: "/etc/copy-here",
+      dest_name: "system.yaml",
+    }
+    - {
+      src_directory: "/tmp",
+      src_name: "file",
+      dest_directory: "/etc/copy-here",
+      dest_name: "file",
+    }
+  own:
+    change: true
+    user: consul
+    group: consul

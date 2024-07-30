@@ -1,0 +1,30 @@
+---
+# - name: Sync | Copy the desired file to the tmp folder
+#   ansible.builtin.template:
+#     src: "{{ src_directory }}/{{ src_name }}"
+#     dest: "{{ sync_template.raw.directory }}/{{ src_name }}"
+#     mode: "0664"
+
+- name: Sync | Get timestamp from the system
+  ansible.builtin.command: "date +%Y-%m-%d%H-%M-%S"
+  register: tstamp
+  changed_when: false
+
+- name: Sync | Set timestamp variable
+  ansible.builtin.set_fact:
+    cur_date: "{{ tstamp.stdout[0:10] }}"
+
+- name: Sync | Backup the {{ dest_directory }}/{{ dest_name }}
+  ansible.builtin.command:
+    cmd: "sudo cp {{ dest_directory }}/{{ dest_name }} {{ sync_template.raw.backup_directory }}/{{ dest_name }}.{{ cur_date }}"
+  changed_when: false
+
+- name: Sync | Move the desired file from tmp folder to the location of the target file
+  ansible.builtin.command:
+    cmd: "sudo mv {{ sync_template.raw.directory }}/{{ src_name }} {{ dest_directory }}/{{ dest_name }}"
+  changed_when: false
+
+- name: Sync | Change user and group
+  ansible.builtin.command:
+    cmd: "sudo chown {{ sync_template.own.user }}:{{ sync_template.own.group }} {{ dest_directory }}/{{ dest_name }}"
+  changed_when: false

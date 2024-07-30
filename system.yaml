@@ -1,0 +1,32 @@
+---
+# defaults file for sync
+
+sync_plain:
+  enabled: true
+  raw:
+    enabled: false
+    directory: "/tmp"
+  files:
+    - {
+      src_directory: "/path/to/source/dir",
+      src_name: "file1",
+      dest_directory: "/path/to/source/dir",
+      dest_name: "file1",
+    }
+    - {
+      src_directory: "/path/to/source/dir",
+      src_name: "file1",
+      dest_directory: "/path/to/source/dir",
+      dest_name: "file1",
+    }
+
+sync_template:
+  enabled: true
+  raw: false
+  files:
+    - {
+      src_directory: "/path/to/source/dir",
+      src_name: "file1",
+      dest_directory: "/path/to/source/dir",
+      dest_name: "file1",
+    }
